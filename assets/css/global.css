@@ -1,24 +1,12 @@
 @charset "utf-8";
 body {
-  font-family: "Lato", sans-serif;
-  font-weight: 400;
-  padding-top: 5.0rem;
-  color: #f5f5f5;
-  font-size: 18px;
-  position: relative;
-}
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    padding-top: 5.0rem;
 
-body::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-image: url('images/background.jpeg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  z-index: -1;
-  opacity: 0.95; /* 调整这个数值控制背景图透明度 */
+    font-size: 18px;   /* 改这里：16/18/20 都常见 */
+    line-height: 1.6;  /* 可选：提高可读性 */
+    background-color: #f8f9fa;
 }
 
 h1, h2, h3, h4, h5, h6,
@@ -26,21 +14,50 @@ h1, h2, h3, h4, h5, h6,
     font-weight: 700;
 }
 
+p, li {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+
+.card {
+    border-radius: 0.8rem!important;
+}
+
+.card-img-overlay {
+    border-radius: 0.8rem!important;
+}
+
+.rounded-xl {
+    border-radius: 0.8rem!important;
+}
+
+.rounded-xl-bottom {
+    border-bottom-right-radius: 0.8rem !important;
+    border-bottom-left-radius: 0.8rem !important;
+}
+
+.rounded-xl-top {
+    border-top-left-radius: 0.8rem !important;
+    border-top-right-radius: 0.8rem !important;
+}
+
+
 .text-profile-position {
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .text-profile-bio {
     /* font-family: "Raleway"; */
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .navbar {
-    opacity: 0.75;
+    opacity: 0.99;
 }
 
 .inline-badge {
-    height: 16px;
+    height: 18px;
     vertical-align: -10%;
     margin-right: 2px;
     line-break: unset;
@@ -80,31 +97,5 @@ div.lazy {
 }
 
 .email-text {
-    font-family: Courier, monospace;
-}
-
-a {
-  color: #66ccff; /* 普通状态（未访问） */
-  text-decoration: none; /* 可选：去掉下划线 */
-}
-
-a:hover {
-  color: #99ddff; /* 鼠标悬停时 */
-  text-decoration: underline; /* 鼠标悬停时显示下划线 */
-}
-
-.bg-semi-transparent {
-  background-color: rgba(0, 0, 0, 0.7);
-}
-
-.footer-link {
-  color: inherit;         /* 使用父元素字体颜色 */
-  font-family: inherit;   /* 使用父元素字体 */
-  font-weight: inherit;
-  text-decoration: none;  /* 鼠标悬停时显示下划线 */
-}
-
-.footer-link:hover {
-  color: inherit;
-  text-decoration: underline;
+    font-family: Source Code Pro, monospace;
 }
