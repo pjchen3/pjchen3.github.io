@@ -1,0 +1,71 @@
+author:
+  name: "Pinjian Chen"
+  aliases:
+    - "P. Chen"
+    - "Chen, P."
+  first_author_weight: 1.0
+  corresponding_author_weight: 1.0
+  coauthor_weight: 0.6
+
+input:
+  pdf_directory: "./papers"
+  recursive: true
+
+extraction:
+  use_ocr_fallback: false
+  exclude_references: true
+  max_pages_per_paper: null
+  min_extracted_characters: 500
+
+topics:
+  language: "en"
+  max_topics_per_paper: 15
+  final_max_words: 80
+  min_paper_count: 1
+  prefer_phrases: true
+  stopwords: []
+  synonyms:
+    "planetary nebulae": ["PN", "PNe", "planetary nebula"]
+  force_include: {}
+  exclude: []
+  display_names:
+    "time-series photometry": "Time-series Photometry"
+  categories: {}
+
+weighting:
+  use_recency: true
+  recency_half_life_years: 6
+
+wordcloud:
+  width: 1600
+  height: 900
+  background_color: "#FAFBFD"
+  max_font_size: 138
+  min_font_size: 20
+  prefer_horizontal: 0.86
+  relative_scaling: 0.38
+  margin: 16
+  random_seed: 17
+  font_path: null
+  colors:
+    object: "#315FCE"
+    physical_process: "#D1495B"
+    science_question: "#7456C9"
+    method: "#16817A"
+    survey_or_instrument: "#C77918"
+    galaxy_or_environment: "#A34D8C"
+    general_field: "#172033"
+
+website:
+  interactive: true
+  paper_base_url: ""
+  open_links_in_new_tab: true
+  paper_links: {}
+
+llm:
+  enabled: false
+  provider: "openai-compatible"
+  model: ""
+  api_base: ""
+  api_key_env: "RESEARCH_CLOUD_API_KEY"
+  timeout_seconds: 90

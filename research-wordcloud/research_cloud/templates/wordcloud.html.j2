@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research interests word cloud</title>
+  <style>
+    :root { color-scheme: light dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #172033; background: transparent; }
+    .shell { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, 28%); gap: 1rem; padding: .75rem; }
+    .stage { position: relative; width: 100%; aspect-ratio: {{ width }} / {{ height }}; overflow: hidden; border-radius: 18px; background: {{ background_color }}; box-shadow: 0 12px 35px rgba(15,23,42,.10); }
+    .canvas { position: absolute; width: {{ width }}px; height: {{ height }}px; transform-origin: top left; }
+    .word { position: absolute; border: 0; padding: 0; background: none; font-family: Arial, Helvetica, sans-serif; font-weight: 650; line-height: 1; white-space: nowrap; cursor: pointer; transform-origin: top left; transition: opacity .15s, filter .15s; }
+    .canvas:hover .word:not(:hover) { opacity: .68; }
+    .word:hover, .word:focus-visible { filter: brightness(.8); outline: 3px solid rgba(37,99,235,.24); outline-offset: 4px; border-radius: 3px; }
+    aside { min-height: 220px; padding: 1.1rem; border: 1px solid #dbe3ef; border-radius: 16px; background: rgba(248,250,252,.98); }
+    aside h2 { margin: 0 0 .35rem; font-size: 1.25rem; }
+    .meta { color: #526176; font-size: .9rem; }
+    ul { padding-left: 1.1rem; }
+    a { color: #1d4ed8; }
+    .tooltip { position: fixed; z-index: 5; max-width: 280px; pointer-events: none; opacity: 0; padding: .5rem .65rem; color: white; background: #111827; border-radius: 8px; font-size: .8rem; box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+    @media (max-width: 800px) { .shell { grid-template-columns: 1fr; } aside { min-height: 0; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="stage" aria-label="Interactive research topic cloud"><div class="canvas" id="canvas"></div></section>
+    <aside id="details" aria-live="polite">
+      <h2>Explore a topic</h2>
+      <p class="meta">Hover for a quick description. Select a term to see the papers that support it.</p>
+    </aside>
+  </main>
+  <div class="tooltip" id="tooltip" role="tooltip"></div>
+  <script>
+    const records = {{ records_json | safe }};
+    const canvas = document.getElementById('canvas');
+    const stage = document.querySelector('.stage');
+    const details = document.getElementById('details');
+    const tooltip = document.getElementById('tooltip');
+    const escapeHtml = value => String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    function resize() { canvas.style.transform = `scale(${stage.clientWidth / {{ width }}})`; }
+    new ResizeObserver(resize).observe(stage); resize();
+    function showDetails(topic) {
+      const papers = topic.papers.map(p => {
+        const name = `${escapeHtml(p.title)}${p.year ? ` (${p.year})` : ''}`;
+        return `<li>${p.url ? `<a href="${escapeHtml(p.url)}" {% if new_tab %}target="_blank" rel="noopener"{% endif %}>${name}</a>` : name}</li>`;
+      }).join('');
+      details.innerHTML = `<h2>${escapeHtml(topic.display_name)}</h2><div class="meta">${escapeHtml(topic.category.replaceAll('_',' '))} · ${topic.paper_count} paper${topic.paper_count === 1 ? '' : 's'} · weight ${topic.weight}</div><p>${escapeHtml(topic.summary)}</p><h3>Related papers</h3><ul>${papers}</ul>`;
+    }
+    records.forEach(record => {
+      const button = document.createElement('button');
+      button.className = 'word';
+      button.type = 'button';
+      button.textContent = record.word;
+      button.style.left = `${record.x}px`;
+      button.style.top = `${record.y}px`;
+      button.style.fontSize = `${record.font_size}px`;
+      button.style.color = record.color;
+      button.style.transform = `rotate(${record.rotate}deg)`;
+      button.setAttribute('aria-label', `${record.word}: ${record.topic.summary}`);
+      button.addEventListener('click', () => showDetails(record.topic));
+      button.addEventListener('mouseenter', event => {
+        tooltip.innerHTML = `<strong>${escapeHtml(record.word)}</strong><br>${escapeHtml(record.topic.category.replaceAll('_',' '))} · ${record.topic.paper_count} paper${record.topic.paper_count === 1 ? '' : 's'}<br>${escapeHtml(record.topic.summary)}`;
+        tooltip.style.opacity = 1;
+      });
+      button.addEventListener('mousemove', event => { tooltip.style.left = `${event.clientX + 14}px`; tooltip.style.top = `${event.clientY + 14}px`; });
+      button.addEventListener('mouseleave', () => { tooltip.style.opacity = 0; });
+      canvas.appendChild(button);
+    });
+  </script>
+</body>
+</html>

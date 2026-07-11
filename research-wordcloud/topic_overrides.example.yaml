@@ -1,0 +1,21 @@
+rename:
+  "pne": "Planetary Nebulae"
+
+merge:
+  "planetary nebulae":
+    - "PN"
+    - "PNe"
+    - "planetary nebula"
+
+exclude:
+  - "astrophysics"
+  - "stellar objects"
+
+force_include:
+  "Late-stage Stellar Evolution":
+    weight: 100
+    category: "general_field"
+
+category_override:
+  "M31": "galaxy_or_environment"
+

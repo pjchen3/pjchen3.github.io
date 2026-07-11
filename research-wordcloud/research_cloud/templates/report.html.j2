@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research publication analysis</title>
+  <style>
+    :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #172033; background: #f4f7fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { padding: 3.5rem max(5vw,1rem) 5rem; color: white; background: linear-gradient(125deg,#172554,#1d4ed8 55%,#0f766e); }
+    header h1 { margin: 0 0 .5rem; font-size: clamp(2rem,5vw,4.5rem); line-height: 1; }
+    main { max-width: 1180px; margin: -2.5rem auto 4rem; padding: 0 1rem; }
+    section { margin-bottom: 1rem; padding: clamp(1rem,3vw,2rem); border: 1px solid #dde5f0; border-radius: 20px; background: white; box-shadow: 0 12px 30px rgba(15,23,42,.07); }
+    h2 { margin-top: 0; }
+    .summary { white-space: pre-wrap; line-height: 1.65; }
+    .cloud { width: 100%; height: auto; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 1rem; }
+    .topic, .paper { padding: 1rem; border: 1px solid #dbe3ef; border-radius: 12px; }
+    .topic h3, .paper h3 { margin: 0 0 .3rem; }
+    .badge { display: inline-block; padding: .2rem .5rem; border-radius: 999px; background: #e8efff; color: #1e40af; font-size: .75rem; }
+    .bar-row { display: grid; grid-template-columns: 180px 1fr 30px; gap: .6rem; align-items: center; margin: .45rem 0; }
+    .bar { height: .7rem; border-radius: 999px; background: #2563eb; }
+    details { margin-top: .75rem; }
+    .warnings { color: #8a3418; background: #fff8ed; }
+    a { color: #1d4ed8; }
+    @media (max-width: 600px) { .bar-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header><h1>Research landscape</h1><p>Transparent, paper-traceable topic analysis</p></header>
+  <main>
+    <section><h2>Overview</h2><div class="summary">{{ summary_markdown }}</div></section>
+    <section><h2>Topic cloud</h2><img class="cloud" src="wordcloud.svg" alt="Research interests word cloud"><p><a href="wordcloud.html">Open the interactive version</a></p></section>
+    <section><h2>Topic categories</h2>{% for name, count in categories %}<div class="bar-row"><span>{{ name | replace('_',' ') }}</span><div class="bar" style="width: {{ count * 100 / categories[0][1] }}%"></div><strong>{{ count }}</strong></div>{% endfor %}</section>
+    <section><h2>Top topics</h2><div class="grid">{% for topic in topics %}<article class="topic"><h3>{{ topic.display_name }}</h3><span class="badge">{{ topic.category | replace('_',' ') }} · level {{ topic.level }}</span><p>{{ topic.summary }}</p><strong>Weight {{ topic.weight }} · {{ topic.paper_count }} paper{% if topic.paper_count != 1 %}s{% endif %}</strong><details><summary>Related papers</summary><ul>{% for paper in topic.papers %}<li>{% if paper.url %}<a href="{{ paper.url }}" {% if new_tab %}target="_blank" rel="noopener"{% endif %}>{{ paper.title }}</a>{% else %}{{ paper.title }}{% endif %}{% if paper.year %} ({{ paper.year }}){% endif %}</li>{% endfor %}</ul></details>{% for warning in topic.warnings %}<p class="warnings">{{ warning }}</p>{% endfor %}</article>{% endfor %}</div></section>
+    <section><h2>Topic timeline</h2><img class="cloud" src="topic_timeline.png" alt="Research topic timeline"></section>
+    <section><h2>Paper summaries</h2><div class="grid">{% for paper in papers %}<article class="paper"><h3>{{ paper.title or paper.file }}</h3><span class="badge">{{ paper.year or 'year unknown' }}{% if paper.journal %} · {{ paper.journal }}{% endif %}</span><p><strong>Topics:</strong> {{ paper.topic_phrases | join(', ') }}</p>{% if paper.main_results %}<details><summary>Main results</summary><ul>{% for result in paper.main_results %}<li>{{ result }}</li>{% endfor %}</ul></details>{% endif %}<p>Confidence: {{ '%.0f' | format(paper.confidence * 100) }}%</p></article>{% endfor %}</div></section>
+    {% if warnings %}<section class="warnings"><h2>Quality warnings</h2><ul>{% for warning in warnings %}<li>{{ warning }}</li>{% endfor %}</ul></section>{% endif %}
+  </main>
+</body>
+</html>
+
